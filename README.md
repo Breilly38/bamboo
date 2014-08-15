@@ -4,6 +4,8 @@ Bamboo is an IRC bot that tracks karma of users.
 
 It is currently named after the nearby [bamboo restaurant](http://www.yelp.com/biz/bamboo-fine-asian-cuisine-westford), which contrasts with the also nearby [karma restaurant](http://karmawestford.com/).
 
+Chipbot is an offshoot of Bamboo. Original Bamboo source can be found [here](https://github.com/vgmoose/bamboo).
+
 ### Debugging
 
 To run Bamboo in debug mode, the following syntax is recommended:
