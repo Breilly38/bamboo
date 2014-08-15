@@ -395,7 +395,7 @@ def computeResponse(sender, message, channel):
         global shared_source
         if not shared_source:
             shared_source = True
-        return "https://github.com/vgmoose/bamboo/"
+        return "https://github.com/Breilly38/bamboo/tree/chipbot"
 
     elif message[:len(args.nick)+10] == args.nick+": scramble":
         toggleScrambles(sender)
