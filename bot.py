@@ -32,20 +32,23 @@ import random
 import ssl
 from pattern.web import *
 import re
+import time
 
 parser = argparse.ArgumentParser(description="Bamboo argument parsing")
-parser.add_argument("-s", "--server", nargs='?', default="irc.freenode.net")
+parser.add_argument("-s", "--server", nargs='?', default="warden.esper.net")
 parser.add_argument("-p", "--port", nargs='?', default=6667, type=int)
-parser.add_argument("-n", "--nick", nargs='?', default="bamboo")
-parser.add_argument("-i", "--ident", nargs='?', default="bamboo")
+parser.add_argument("-n", "--nick", nargs='?', default="chipbot")
+parser.add_argument("-i", "--ident", nargs='?', default="chipbot")
 parser.add_argument("-r", "--realname", nargs='?', default="love me")
-parser.add_argument("-c", "--channel", nargs='?', default="#WestfordInterns")
+parser.add_argument("-c", "--channel", nargs='?', default="#ChipWINChat")
 parser.add_argument("-k", "--karmafile", nargs='?', default=".karmascores")
 parser.add_argument("-a", "--statsfile", nargs='?', default=".stats")
 parser.add_argument("-z", "--scramblefile", nargs='?', default=".scrambles")
 parser.add_argument("-d", "--debug", action="store_true")
 parser.add_argument("-g", "--generousfile", nargs='?', default=".generous")
-parser.add_argument("-t", "--tls", action="store_true")
+parser.add_argument("-m", "--modfile", nargs='?', default=".mods")
+parser.add_argument("-t", "--tls", action="store_true", default=False)
+parser.add_argument("--password", nargs='?')
 args = parser.parse_args(sys.argv[1:])
 
 readbuffer = ""
@@ -65,17 +68,48 @@ stats = loadData(args.statsfile)
 generous = loadData(args.generousfile)
 scrambleTracker = loadData(args.scramblefile)
 
+with open(args.mods) as f:
+    mods = f.readlines()
+
 # connect to the server
 s = socket.socket()
 if args.tls:
+    print "ssl"
     s = ssl.wrap_socket(s)
 
 s.connect((args.server, args.port))
 
-# join the channel and set nick
 s.send(bytes("NICK %s\r\n" % args.nick))
 s.send(bytes("USER %s %s bla :%s\r\n" % (args.ident, args.server, args.realname)))
-s.send(bytes("JOIN %s\r\n" % args.channel));
+
+brkflg = 0
+while True:
+    # join the channel and set nick
+    readbuffer = readbuffer+s.recv(1024).decode("UTF-8")
+    temp = readbuffer.split("\n")
+    readbuffer=temp.pop()
+    
+    # go through each of the received lines
+    for line in temp:
+        line = line.rstrip()
+        line = line.split()
+        
+        if args.debug:
+            print line
+
+            # this is required so that the connection does not timeout
+            if line[0] == "PING":
+                print "PING on " + line[1]
+                s.send(bytes("PONG %s\r\n" % line[1]))
+                brkflg = 1
+                break
+    if brkflg == 1:
+        break
+
+time.sleep(5)
+s.send(bytes("PRIVMSG NickServ : identify %s\r\n" % args.password))
+time.sleep(5)
+s.send(bytes("JOIN %s\r\n" % args.channel))
 
 # returns the sender
 def parseSender(line):
@@ -465,6 +499,10 @@ while 1:
                 if arglist == []:
                     politelyDoNotEngage(sender)
                     continue
+                elif func == "update":
+                    for m in mod:
+                        if sender == m:
+                            updateBamboo()
             
             # Too much potential for griefing...
             #    elif func == "say":
