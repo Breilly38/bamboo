@@ -465,8 +465,11 @@ while 1:
                 if arglist == []:
                     politelyDoNotEngage(sender)
                     continue
-                elif func == "say":
-                    anonSay(' '.join(arglist))
+            
+            # Too much potential for griefing...
+            #    elif func == "say":
+            #        anonSay(' '.join(arglist))
+
                 else:
                     politelyDoNotEngage(sender)
                 continue
