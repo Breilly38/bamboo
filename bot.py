@@ -467,12 +467,17 @@ while 1:
             newusers = line[6:]
             for u in newusers:
                 u = u.lstrip("@").lstrip(":").lower()
+                if u[0] == "+":
+                    u = u[1:]
                 currentusers.append(u)
         
         # update list of users when a nick is changed
         elif line[1] == "NICK":
             if not line[2] in currentusers:
-                currentusers.append(line[2].lstrip("@").lstrip(":").lower())
+                u = line[2].lstrip("@").lstrip(":").lower()
+                if u[0] == "+":
+                    u = u[1:] 
+                currentusers.append(u)
                
         elif line[1] == "433":
             args.nick = line[2]
