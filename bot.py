@@ -435,12 +435,12 @@ def computeResponse(sender, message, channel):
         toggleScrambles(sender)
         return sender + " is now known as %s%s" % scramble((sender,""))
 
-    elif message[:len(args.nick)+8] == args.nick+": update":
-        updateBamboo()
+    #elif message[:len(args.nick)+8] == args.nick+": update":
+    #    updateBamboo()
 
-    elif message[:len(args.nick)+7] == args.nick+": /nick":
-        args.nick = message[len(args.nick)+7:].lstrip().rstrip()
-        s.send(bytes("NICK " + args.nick + "\r\n"))
+    #elif message[:len(args.nick)+7] == args.nick+": /nick":
+    #    args.nick = message[len(args.nick)+7:].lstrip().rstrip()
+    #    s.send(bytes("NICK " + args.nick + "\r\n"))
 
 
 while 1:
