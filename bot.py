@@ -106,8 +106,9 @@ while True:
     if brkflg == 1:
         break
 
-time.sleep(5)
-s.send(bytes("PRIVMSG NickServ : identify %s\r\n" % args.password))
+if args.password:
+    time.sleep(5)
+    s.send(bytes("PRIVMSG NickServ : identify %s\r\n" % args.password))
 time.sleep(5)
 s.send(bytes("JOIN %s\r\n" % args.channel))
 
@@ -234,6 +235,13 @@ def youtube(searchTerm):
         g = Google()
         for result in g.search("youtube"+searchTerm):
             if "http://www.youtube.com/watch" in result.url:
+                return result.title + " " + result.url
+
+def bandcamp(searchTerm):
+    if searchTerm != "":
+        g = Google()
+        for result in g.search("bandcamp"+searchTerm):
+            if "bandcamp.com" in result.url:
                 return result.title + " " + result.url
 
 # returns the response given a sender, message, and channel
@@ -425,23 +433,9 @@ def computeResponse(sender, message, channel):
     elif func == ".yt":
         return youtube(message[3:])
         
-    #elif message == "sharesource":
-    #    global shared_source
-    #    if not shared_source:
-    #        shared_source = True
-    #    return "https://github.com/Breilly38/bamboo/tree/chipbot"
-
     elif message[:len(args.nick)+10] == args.nick+": scramble":
         toggleScrambles(sender)
         return sender + " is now known as %s%s" % scramble((sender,""))
-
-    #elif message[:len(args.nick)+8] == args.nick+": update":
-    #    updateBamboo()
-
-    #elif message[:len(args.nick)+7] == args.nick+": /nick":
-    #    args.nick = message[len(args.nick)+7:].lstrip().rstrip()
-    #    s.send(bytes("NICK " + args.nick + "\r\n"))
-
 
 while 1:
     # read in lines from the socket
