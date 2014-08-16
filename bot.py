@@ -432,6 +432,9 @@ def computeResponse(sender, message, channel):
 
     elif func == ".yt":
         return youtube(message[3:])
+
+    elif func == ".bc":
+        return bandcamp(message[3:])
         
     elif message[:len(args.nick)+10] == args.nick+": scramble":
         toggleScrambles(sender)
