@@ -68,7 +68,7 @@ stats = loadData(args.statsfile)
 generous = loadData(args.generousfile)
 scrambleTracker = loadData(args.scramblefile)
 
-with open(args.mods) as f:
+with open(args.modfile) as f:
     mods = f.readlines()
 
 # connect to the server
@@ -425,11 +425,11 @@ def computeResponse(sender, message, channel):
     elif func == ".yt":
         return youtube(message[3:])
         
-    elif message == "sharesource":
-        global shared_source
-        if not shared_source:
-            shared_source = True
-        return "https://github.com/Breilly38/bamboo/tree/chipbot"
+    #elif message == "sharesource":
+    #    global shared_source
+    #    if not shared_source:
+    #        shared_source = True
+    #    return "https://github.com/Breilly38/bamboo/tree/chipbot"
 
     elif message[:len(args.nick)+10] == args.nick+": scramble":
         toggleScrambles(sender)
@@ -493,21 +493,25 @@ while 1:
             
             # if not on the channel, tell the user you're a bot
             if channel != args.channel:
+                modflag = False
                 splitmsg =message.split(' ')
                 func = splitmsg[0]
                 arglist = splitmsg[1:]
-                if arglist == []:
-                    politelyDoNotEngage(sender)
-                    continue
-                elif func == "update":
-                    for m in mod:
-                        if sender == m:
-                            updateBamboo()
-            
-            # Too much potential for griefing...
-            #    elif func == "say":
-            #        anonSay(' '.join(arglist))
 
+                for m in mods:
+                    if sender == m:
+                        modflag = True
+                        break
+             
+                if func == "update" and modflag:
+                    updateBamboo()        
+           
+                elif func == "say" and modflag and arglist != []:
+                    anonSay(' '.join(arglist))
+
+                elif func == "source" and modflag:
+                    anonSay("https://github.com/Breilly38/bamboo/tree/chipbot")
+            
                 else:
                     politelyDoNotEngage(sender)
                 continue
