@@ -497,12 +497,13 @@ while 1:
                 splitmsg =message.split(' ')
                 func = splitmsg[0]
                 arglist = splitmsg[1:]
-
+                
+                
                 for m in mods:
-                    if sender == m:
+                    if (sender + '\n') == m:
                         modflag = True
                         break
-             
+                
                 if func == "update" and modflag:
                     updateBamboo()        
            
